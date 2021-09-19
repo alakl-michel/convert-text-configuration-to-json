@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Untitled Document</title>
+</head>
+
+<body>
+
+
+<textarea id="myTextarea"></textarea>
+<button id="my-button" onclick="myFunction()">check text</button>
+<script>
+
+myFunction = () =>{
+	const str = document.getElementById("myTextarea").value.replace(/ /g,'')
+	const lines = str.split("\n")
+	const jsonObj = new Object()
+	/// all keys grouping
+	//  log all key names and their level of nesting 
+	const allKeys = []
+	const allValues = {}
+	
+	for (let i = 0; i < lines.length; i++){
+		const temp = lines[i].split("=")
+		const tempLeft = temp[0].split(".")
+		
+		tempLeft.forEach( (element, index) => allKeys.push( `${element}_${index}`))
+		
+		const obj_count = tempLeft.length-1
+		if (!allValues[`${tempLeft[obj_count]}_${obj_count}`]) 
+			allValues[`${tempLeft[obj_count]}_${obj_count}`] = []
+			
+		allValues[`${tempLeft[tempLeft.length-1]}_${tempLeft.length-1}`].push(temp[1])
+	}
+	//console.log(allValues)
+	/// turn array allKeys to object { key name  : ocrruence times}
+	const KeysCount = allKeys.reduce( (grouped , key ) =>{
+		grouped[key] = ( grouped[key] || 0) + 1
+		return grouped
+	},{})
+	/////
+	
+	
+	for (let i = 0; i < lines.length; i++){
+	
+		const temp = lines[i].split("=")
+		const tempLeft = temp[0].split(".")
+		let tempRef = jsonObj
+		
+		for(let i = 0; i < tempLeft.length - 1; i++ ){
+			if( !tempRef[tempLeft[i]] ) tempRef[tempLeft[i]] = {}
+			tempRef = tempRef[tempLeft[i]]
+		}
+		
+		const obj_count = tempLeft.length-1
+		if ( KeysCount[`${tempLeft[obj_count]}_${obj_count}`]  <  2)
+			tempRef[ tempLeft[obj_count] ] = temp[1]
+		else{
+			tempRef[tempLeft[obj_count]] = {}
+			tempRef = tempRef[tempLeft[obj_count]]
+			Object.assign( tempRef, allValues[`${tempLeft[obj_count]}_${obj_count}`] )
+		}
+	
+	}
+	console.log(jsonObj)
+	//console.log(JSON.stringify(jsonObj))
+	
+
+}
+
+
+
+</script>
+
+<!--	
+
+
+
+Configuration files parser
+===
+
+Create an application that will convert text-based configuration format into json.
+The application should accept input as file or a stdin-stream and print result into stdout.
+
+Sample input:
+```
+config = 3
+config_b.items = item1
+config_b.items = item2
+config_b.items.named_item = 123
+config_c.root.a.b.c = 13
+```
+
+Expected output for sample input:
+```
+{
+   "config":3,
+   "config_b":{
+      "items":{
+         "0":"item1",
+         "1":"item2",
+         "named_item":123
+      }
+   },
+   "config_c":{
+      "root":{
+         "a":{
+            "c":13
+         }
+      }
+   }
+}
+```
+
+-->
+
+</body>
+</html>
