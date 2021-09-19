@@ -1,5 +1,5 @@
 # Convert-text-configuration-to-json JavaScript challenge
-convert-text-configuration-to-json
+convert-text-configuration-to-json JavaScript challenge
 
 Configuration files parser
 ===
