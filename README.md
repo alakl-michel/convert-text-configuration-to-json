@@ -1,4 +1,4 @@
-# convert-text-configuration-to-json Javascript challenge
+# Convert-text-configuration-to-json JavaScript challenge
 convert-text-configuration-to-json
 
 Configuration files parser
